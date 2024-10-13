@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alphabet Grid Clockwise Blinking Animation</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(5, 50px);
+      grid-gap: 5px;
+      margin: 20px;
+    }
+
+    .grid-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      /* border: 1px solid #fff; */
+      font-size: 20px;
+      transition: background-color 0.3s;
+      border-radius: 50px;
+    }
+
+    .highlighted {
+      background-color: black;
+      color: #ffff;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    label {
+      margin-right: 5px;
+    }
+    
+    .speed-value {
+      font-weight: bold;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div>   <nav>
+    <img src="Screenshot 2024-10-06 213732.png" alt="">
+    <a href="/" aria-current="page">Home</a>
+    <a href="page2.html" onclick="alphabetpage">Alphabet </a>
+    <a href="/page3.html">clock Wise Rotation </a>
+    <a href="/page4.html">Anti Clock Wise Rotation </a>
+    <a href="/page5.html">Random Location </a>
+    <a href="/numarical.html">Numarical</a>
+
+  </nav></div>
+  <h2>Alphabet Grid Clockwise Blinking Animation</h2>
+  <div class="grid-container" id="grid">
+    <!-- JavaScript will populate the grid items here -->
+  </div>
+
+  <div class="controls">
+    <label>
+      Speed:
+      <input type="range" id="speed" min="0.1" max="2" step="0.1" value="1" oninput="adjustSpeed()">
+    </label>
+    <span class="speed-value" id="speedValue">1.0 s</span>
+    <button class="button" onclick="startAnimation()">Start</button>
+    <button class="button" onclick="stopAnimation()">Stop</button>
+  </div>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const speedInput = document.getElementById('speed');
+    const speedValueDisplay = document.getElementById('speedValue');
+    let timeoutId;
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    
+    // Clockwise index order for a 5x4 grid (20 letters)
+    const clockwiseOrder = [
+      0, 1, 2, 3,  // Top row left to right
+      4, 9, 14, 19, // Right column top to bottom
+      18, 17, 16, 15, // Bottom row right to left
+      10, 5, 6, 7, 8, // Left column bottom to top
+      11, 12, 13 // Inner part to complete the cycle
+    ];
+
+    // Populate the grid
+    letters.forEach(letter => {
+      const div = document.createElement('div');
+      div.classList.add('grid-item');
+      div.textContent = letter;
+      grid.appendChild(div);
+    });
+
+    const gridItems = document.querySelectorAll('.grid-item');
+    let currentStep = 0;
+    let speed = parseFloat(speedInput.value) * 1000; // Convert seconds to milliseconds
+
+    function highlightItem(index) {
+      gridItems.forEach((item, i) => {
+        item.classList.toggle('highlighted', i === index);
+      });
+    }
+
+    function startAnimation() {
+      stopAnimation(); // Stop any existing animation
+      animateStep();
+    }
+
+    function animateStep() {
+      const currentIndex = clockwiseOrder[currentStep];
+      highlightItem(currentIndex);
+
+      // Move to the next step in the clockwise order
+      currentStep = (currentStep + 1) % clockwiseOrder.length;
+
+      // Set timeout with the current speed and recursively call animateStep
+      timeoutId = setTimeout(animateStep, speed);
+    }
+
+    function stopAnimation() {
+      clearTimeout(timeoutId);
+      currentStep = 0;
+      gridItems.forEach(item => item.classList.remove('highlighted')); // Remove highlight from all items
+    }
+
+    function adjustSpeed() {
+      speed = parseFloat(speedInput.value) * 1000; // Convert seconds to milliseconds
+      speedValueDisplay.textContent = speedInput.value + ' s'; // Update the speed value display
+
+      // If the animation is already running, restart it with the new speed
+      if (timeoutId) {
+        stopAnimation();
+        startAnimation();
+      }
+    }
+
+    // Initial highlight (optional)
+    highlightItem(clockwiseOrder[currentStep]);
+  </script>
+</body>
+</html>

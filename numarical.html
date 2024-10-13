@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Numerical Grid Random Blinking Animation</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(5, 50px);
+      grid-gap: 5px;
+      margin: 20px;
+      
+    }
+
+    .grid-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      /* border: 1px solid #ddd; */
+      font-size: 20px;
+      transition: background-color 0.3s;
+      
+    }
+
+    .highlighted {
+      background-color: black;
+      color: #ffff;
+    }
+
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    label {
+      margin-right: 5px;
+    }
+    
+    .speed-value {
+      font-weight: bold;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div>   <nav>
+    <img src="Screenshot 2024-10-06 213732.png" alt="">
+    <a href="/" aria-current="page">Home</a>
+    <a href="page2.html" onclick="alphabetpage">Alphabet </a>
+    <a href="/page3.html">clock Wise Rotation </a>
+    <a href="/page4.html">Anti Clock Wise Rotation </a>
+    <a href="/page5.html">Random Location </a>
+    <a href="/numarical.html">Numarical</a>
+
+  </nav></div>
+  <h2>Numerical Grid Random Blinking Animation</h2>
+  <div class="grid-container" id="grid">
+    <!-- JavaScript will populate the grid items here -->
+  </div>
+
+  <div class="controls">
+    <label>
+      Speed:
+      <input type="range" id="speed" min="0.1" max="2" step="0.1" value="1" oninput="adjustSpeed()">
+    </label>
+    <span class="speed-value" id="speedValue">1.0 s</span>
+    <button class="button" onclick="startAnimation()">Start</button>
+    <button class="button" onclick="stopAnimation()">Stop</button>
+  </div>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const speedInput = document.getElementById('speed');
+    const speedValueDisplay = document.getElementById('speedValue');
+    let timeoutId;
+    const letters = '13759082461375908246'.split('');
+
+    // Populate the grid
+    letters.forEach(letter => {
+      const div = document.createElement('div');
+      div.classList.add('grid-item');
+      div.textContent = letter;
+      grid.appendChild(div);
+    });
+
+    const gridItems = document.querySelectorAll('.grid-item');
+    let speed = parseFloat(speedInput.value) * 1000; // Convert seconds to milliseconds
+
+    function highlightRandomItem() {
+      // Remove highlight from all items
+      gridItems.forEach(item => item.classList.remove('highlighted'));
+
+      // Pick a random index to highlight
+      const randomIndex = Math.floor(Math.random() * gridItems.length);
+      gridItems[randomIndex].classList.add('highlighted');
+    }
+
+    function startAnimation() {
+      stopAnimation(); // Stop any existing animation
+      animateStep();
+    }
+
+    function animateStep() {
+      highlightRandomItem();
+
+      // Set timeout with the current speed and recursively call animateStep
+      timeoutId = setTimeout(animateStep, speed);
+    }
+
+    function stopAnimation() {
+      clearTimeout(timeoutId);
+      gridItems.forEach(item => item.classList.remove('highlighted')); // Remove highlight from all items
+    }
+
+    function adjustSpeed() {
+      speed = parseFloat(speedInput.value) * 1000; // Convert seconds to milliseconds
+      speedValueDisplay.textContent = speedInput.value + ' s'; // Update the speed value display
+
+      // If the animation is already running, restart it with the new speed
+      if (timeoutId) {
+        stopAnimation();
+        startAnimation();
+      }
+    }
+
+    // Initial highlight (optional)
+    highlightRandomItem();
+  </script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Position Blinking Box</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; /* Centering the content vertically */
+      height: 100vh; /* Full viewport height */
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0; /* Light background color */
+    }
+
+    .container {
+      position: relative; /* Allow absolute positioning of children */
+      width: 500px; /* Width of the container */
+      height: 500px; /* Height of the container */
+      border: 1px solid #ccc; /* Optional border for the container */
+      overflow: hidden; /* Hide overflow to keep the box within the container */
+      box-shadow: 3px 6px 6px #0552a4c9;
+      border-radius: 10px;
+    }
+
+    .box {
+      width: 50px; /* Width of the box */
+      height: 50px; /* Height of the box */
+      background-color: transparent; /* No visible background initially */
+      border: 1px solid transparent; /* No visible border initially */
+      transition: background-color 0.3s, border 0.3s; /* Smooth transition for background and border */
+      position: absolute; /* Positioning for random placement */
+      border-radius: 50px;
+      
+      
+    }
+
+    .highlighted {
+      background-color: black; /* Highlighted background color */
+      border: 1px solid black; /* Visible border when highlighted */
+
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 20px; /* Space above controls */
+    }
+
+    label {
+      margin-right: 5px;
+    }
+
+    .speed-value {
+      font-weight: bold;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <img src="Screenshot 2024-10-06 213732.png" alt="">
+    <a href="/" aria-current="page">Home</a>
+    <a href="page2.html" onclick="alphabetpage">Alphabet </a>
+    <a href="/page3.html">clock Wise Rotation </a>
+    <a href="/page4.html">Anti Clock Wise Rotation </a>
+    <a href="/page5.html">Random Location </a>
+    <a href="/numarical.html">Numarical</a>
+
+  </nav>
+  <h2>Random Position Blinking Box</h2>
+  <div class="container">
+    <div class="box" id="box"></div> <!-- Single box element -->
+  </div>
+
+  <div class="controls">
+    <label>
+      Speed:
+      <input type="range" id="speed" min="0.1" max="2" step="0.1" value="1" oninput="adjustSpeed()">
+    </label>
+    <span class="speed-value" id="speedValue">1.0 s</span>
+    <button class="button" onclick="startAnimation()">Start</button>
+    <button class="button" onclick="stopAnimation()">Stop</button>
+  </div>
+
+  <script>
+    const box = document.getElementById('box');
+    const speedInput = document.getElementById('speed');
+    const speedValueDisplay = document.getElementById('speedValue');
+    let timeoutId;
+    let speed = parseFloat(speedInput.value) * 1000; // Convert seconds to milliseconds
+
+    function toggleHighlight() {
+      box.classList.toggle('highlighted'); // Toggle the highlighted class
+    }
+
+    function randomPosition() {
+      const container = document.querySelector('.container');
+      const containerWidth = container.clientWidth;
+      const containerHeight = container.clientHeight;
+
+      // Calculate random x and y positions
+      const x = Math.random() * (containerWidth - box.offsetWidth); // Random x position within container
+      const y = Math.random() * (containerHeight - box.offsetHeight); // Random y position within container
+
+      // Set the position of the box
+      box.style.left = `${x}px`;
+      box.style.top = `${y}px`;
+    }
+
+    function startAnimation() {
+      stopAnimation(); // Stop any existing animation
+      animateStep();
+    }
+
+    function animateStep() {
+      toggleHighlight(); // Toggle highlight
+      randomPosition(); // Move to a new random position
+
+      // Set timeout with the current speed and recursively call animateStep
+      timeoutId = setTimeout(animateStep, speed);
+    }
+
+    function stopAnimation() {
+      clearTimeout(timeoutId);
+      box.classList.remove('highlighted'); // Remove highlight from the box
+    }
+
+    function adjustSpeed() {
+      speed = parseFloat(speedInput.value) * 1000; // Convert seconds to milliseconds
+      speedValueDisplay.textContent = speedInput.value + ' s'; // Update the speed value display
+
+      // If the animation is already running, restart it with the new speed
+      if (timeoutId) {
+        stopAnimation();
+        startAnimation();
+      }
+    }
+
+    // Initial highlight (optional)
+    toggleHighlight();
+  </script>
+</body>
+</html>
